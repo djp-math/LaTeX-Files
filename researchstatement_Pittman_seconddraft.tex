@@ -1,0 +1,456 @@
+\documentclass[11pt]{article}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+%\usepackage{tgpagella}
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{setspace}
+\usepackage{a4wide}
+%\usepackage{showlabels}
+%\usepackage{tikz}
+%\usepackage{color}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    citecolor=black,%default makes the citation numbers green
+    linkcolor=black,%default makes the equation numbers bright red
+    urlcolor=blue} %default color is dark red/magenta
+\textwidth 6.0in
+\oddsidemargin 0.0in
+\evensidemargin 0.0in
+
+
+%seems like geometry breaks the layout
+
+
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+
+%\newenvironment{changemargin}[2]{}
+
+% \newenvironment{changemargin}[1]{
+%   \begin{list}{}{
+%     \setlength{\voffset}{#1}
+%   }
+%   \item[]}{\end{list}}
+
+%The following code was obtained from this link:
+%https://tex.stackexchange.com/questions/93859/condense-the-space-between-bibliographic-entries
+%I did this to compress the references list into a single page.
+%%%%%%%%%%%%%%%%%%%%
+\usepackage{lipsum}
+
+% ADD THE FOLLOWING COUPLE LINES INTO YOUR PREAMBLE
+\let\OLDthebibliography\thebibliography
+\renewcommand\thebibliography[1]{
+  \OLDthebibliography{#1}
+  \setlength{\parskip}{0pt}
+  \setlength{\itemsep}{0pt plus 0.3ex}
+}
+%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{remark}{Remark}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{example}[theorem]{Example}
+\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{property}{Property}[section]
+\newtheorem{observation}{Observation}[section]
+\newenvironment{proof}{{\noindent\bf Proof\ }}{$\Box$ \\}
+\newenvironment{remark}{{\noindent\bf Remark\ }}{$\Box$ \\}
+
+\title{Research Statement}
+\author{David Pittman}
+\date{August 2026}
+
+\begin{document}
+
+
+
+\begin{center} 
+{\LARGE \textbf{Research Statement}}
+
+\vspace{1em}
+
+David Pittman
+\end{center}
+
+\begin{changemargin}{-0.5cm}{-0.5cm}
+%introductory paragraph
+My research focuses on probabilistic techniques for analyzing stochastic processes and extending them to related models.
+In joint work with Brian Fralix, I developed a decomposition-based approach to computing the stationary distributions of discrete-time Markov chains using invariant measures, together with iterative and linear-system methods for computing those measures, with analogous continuous-time results under additional assumptions \cite{PittmanFralix2024}.
+For upper-triangular P\'{o}lya Urn Processes, I extended the notion of a balanced urn from two colors to $n$ colors, yielding explicit formulas for the Laplace transform of the number of balls at time $t$ \cite{PittmanFralix2026Polya}. 
+I then applied a related conditioning-based method to the Generalized P\'{o}lya Process and several of its multivariate extensions, deriving moment recursions and Laplace functionals by reducing the analysis to linear or Bernoulli ODEs instead of PDEs \cite{PittmanFralix2026GPP}.
+
+\section*{New Approach for Computing the Stationary Distribution}
+
+Let $\mathbf{X}=\{X_n : n \ge 0\}$ be a discrete-time Markov chain (DTMC) with transition matrix $\mathbf{P}$ and state space $S$. If $\mathbf{X}$ is irreducible and positive recurrent, then $\mathbf{X}$ has a stationary distribution $\boldsymbol{\pi}$ that can be found by solving the global balance equations $\boldsymbol{\pi} = \boldsymbol{\pi}\mathbf{P}$ with the normalization condition $\sum_{x \in S}\pi(x)=1$. However, when the state space $S$ is large or countably infinite, solving this system of equations directly is computationally infeasible, motivating iterative or other numerical methods to approximate the distribution. In joint work with Brian Fralix, I develop a decomposition-based approach to calculating the stationary distribution in terms of invariant measures. We further introduce an iterative scheme whose iterates increase component-wise to the associated invariant measures \cite{PittmanFralix2024}.
+
+Choose a finite, non-empty, proper subset $M \subset S$ and let $E = S\setminus M$. We regard $M$ as a distinguished subset of states. 
+For each $x \in M$, we construct an invariant measure $\boldsymbol{\mu}_M^{(x)}$ that solves the global balance equations restricted to $E$. For $x \in M$ and $y \in S$, $\mu_{M}^{(x)}(y)$ is defined as the expected number of visits to $y$ before the first positive return to $M$, starting from $x$. When $M$ is a single state $\{x\}$, $\mu_{\{x\}}^{(x)}$ corresponds to the usual invariant measure associated with $x$. The random product technique \cite{FralixHasankhaniKhademi2024} uses irreducibility to show that these invariant measures satisfy the restricted balance equations. Moreover, under positive recurrence, these invariant measures have finite mass.
+
+We further establish that for irreducible and positive recurrent DTMCs, the collection $\{\boldsymbol{\mu}_M^{(x)}:x \in M\}$ forms a basis for the set of absolutely convergent solutions to the restricted balance equations on $E$. This results in the restriction of the stationary distribution $\boldsymbol{\pi}$ to $E$ being a linear combination of these invariant measures. In particular,
+$$\pi(y) = \sum_{x \in M} \pi(x) \mu_{M}^{(x)}(y), ~~~ y \in E.$$
+The coefficients $\{\pi(x):x \in M\}$ can be found up to a common scalar multiple by solving the $|M| \times |M|$ linear system
+$$\pi(x) = \sum_{y \in E} \sum_{z \in M} \pi(z) \mu_M^{(z)}(y) p(y,x) + \sum_{z \in M} \pi(z) p(z,x), ~~~x \in M$$
+where $p(y,x)$ is the $(y,x)$-entry of $\mathbf{P}$, and the scalar is fixed by the normalization condition 
+$$\sum _{x \in M} \pi(x) + \sum_{y \in E} \sum_{x \in M} \pi(x)\mu_M^{(x)}(y)=1.$$
+
+%\end{changemargin}
+
+We also prove that each invariant measure $\boldsymbol{\mu}_{M}^{(x)}$ is the minimal non-negative solution to the restricted balance equations on $E$ with prescribed values on $M$. The proof of this fact yields an iterative scheme that can be used to compute these invariant measures. This scheme has component-wise non-decreasing iterates and converges even for periodic chains, whereas the standard power iteration need not converge for periodic chains. However, our theoretical results are much broader than this iterative scheme. These invariant measures also satisfy the linear system
+$$\boldsymbol{\mu}_M^{(x)}[E] (\mathbf{I} - \mathbf{P}[E,E]) = \mathbf{P}[\{x\},E], ~~~ x \in M$$
+where $\boldsymbol{\mu}_M^{(x)}[A]$ represents the subvector of $\boldsymbol{\mu}_M^{(x)}$ with entries indexed by $A$ and $\mathbf{P}[A,B]$ represents the submatrix of $\mathbf{P}$ with rows indexed by $A$ and columns indexed by $B$.
+When $\mathbf{X}$ is irreducible on a finite state space, the substochastic $\mathbf{P}[E,E]$ has a spectral radius less than 1. Hence $\mathbf{I} - \mathbf{P}[E,E]$ is nonsingular and the linear system for $\boldsymbol{\mu}_M^{(x)}$ can be solved using standard direct or iterative methods for linear systems. This means the invariant-measure representation is not tied to our particular monotone iteration.
+
+\section*{Upper-Triangular P\'{o}lya Urns}
+%A P\'{o}lya urn is a discrete-time stochastic process with the following behavior. An urn contains some number of balls of varying colors. A ball is drawn from the urn, its color is observed, and the ball is placed back into the urn. Depending on the color of the ball drawn, balls are added to or taken from the urn. 
+The P\'{o}lya urn Process is a continuous-time embedding of the discrete-time P\'{o}lya urn introduced by Athreya and Karlin in \cite{AthreyaKarlin1968}. This is obtained by associating with each object in the urn an exponential random clock with rate $1$ independent of all the other objects' clocks. The clock ringing corresponds to the time when an object is drawn from the urn.
+
+Suppose we have $n$ types of objects labeled $1$ through $n$. The upper-triangular P\'{o}lya urn is a P\'{o}lya urn where when an object of type $k$ is drawn, the object is placed back into the urn and more objects of type $k$ through $n$ are added to the urn. This can be represented by the $n \times n$ replacement matrix
+\begin{align*}
+    \mathbf{A} = \left(
+  \begin{array}{cccccc}
+    a_{1,1} & a_{1,2} & a_{1,3} & a_{1,4} & \cdots & a_{1,n} \\
+    0 & a_{2,2} & a_{2,3} & a_{2,4} & \cdots & a_{2,n} \\
+    0 & 0 & a_{3,3} & a_{3,4} & \cdots & a_{3,n} \\
+    0 & 0 & 0 & a_{4,4} & \cdots & a_{4,n} \\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \vdots \\
+    0 & 0 & 0 & 0 & \ddots & a_{n,n} \\
+  \end{array}
+\right).
+\end{align*}
+For $i \le j$, $a_{i,j} > 0$ denotes the amount of type-$j$ material added when a type-$i$ object is drawn. For classical urns, the entries $a_{i,j}$ are integer amounts and correspond to adding different colors of balls. More generally, we allow $a_{i,j}$ to be real-valued, in which case the objects in the urn correspond to containers of $n$ different types of fluid. In the fluid interpretation, a container holding $\delta$ units of type-$i$ fluid has an exponential clock with rate $\delta$ independent of every other container. When the container's clock rings, the container stays in the system, its clock is restarted, and for each $j=i,i+1, \cdots, n$, an additional container of $a_{i,j}$ units of type-$j$ fluid is added.
+
+In \cite{KrennMahmoudWard2019}, the authors address finding the joint moment generating function for the number of balls at time $t$ in the case of $2$ colors. Define $F_i(t)$ as the number of color $i$ balls at time $t$ in the classical urn model, or the amount of type-$i$ fluid at time $t$ in the fluid variation. Let $\mathbf{F}(t) = (F_1(t),F_2(t),\cdots, F_n(t))$. In joint work with Brian Fralix, we derived a recursive expression for the joint Laplace transform of $\mathbf{F}(t)$ \cite{PittmanFralix2026Polya}. To establish this, we considered the Laplace transform for an urn that starts with only one type of fluid in it and conditioned on the time of the first arrival. This conditioning yields a linear or Bernoulli ODE, which can be solved recursively starting with type $n$.
+The resulting expression for the transform associated with type $k$ fluid involves integrals of the transforms associated with types $k+1, k+2, \cdots, n$. The branching property of the process allows us to combine the single-type transforms to obtain the transform for a general initial configuration. This approach avoids the PDE calculation used in the two-type analysis in \cite{KrennMahmoudWard2019} and extends naturally to the $n$-type setting.
+
+I also extended the definition of a balanced urn from two types to $n$ types, following the two-color notion introduced in \cite{ChenMahmoud2018}. The authors of \cite{ChenMahmoud2018} define the notion of a balanced urn for two colors: the same number of balls are always added to the urn each time a ball is drawn, regardless of the color. In the fluid interpretation, this means the same total volume of fluid is added. In terms of the replacement matrix, this means $a_{2,2} = a_{1,1} + a_{1,2}$ and $a_{1,1} < a_{2,2}$. 
+I extended this notion of balance for two colors to the general $n$ types of fluid case in the following way: for each $k = 1, 2, \cdots, n-1$,
+\begin{itemize}
+    \item[(a)] $a_{k,k}<a_{k+1,k+1}$;
+    \item[(b)] $a_{k+1,k+1} = a_{k,k} + a_{k,k+1}$;
+    \item[(c)] for each $i =1,2,\cdots, k$, $a_{i,k+1}=a_{k,k+1}$.
+\end{itemize}
+These conditions imply that every row of the replacement matrix has the same sum, namely $a_{n,n}$, preserving the original interpretation of balance. 
+They also allow the integral terms in the recursive Laplace-transform representation to be evaluated explicitly, yielding an explicit formula in terms of exponential functions.
+
+\section*{Generalized P\'{o}lya Processes}
+The conditioning approach used for the upper-triangular Pólya urn also applies to the Generalized Pólya Process. The Generalized P\'{o}lya Process (GPP) is a self-excited point process that behaves in the following way. Begin with a non-homogeneous Poisson process (NHPP) with rate function $\beta \kappa(t)$, where $\beta, \gamma  > 0$ and $\kappa:[0,\infty) \to [0,\infty)$ is a continuous function. Each arrival independently initiates an offspring NHPP with rate $\gamma\kappa(t)$ for $t$ greater than the arrival time; every subsequent arrival initiates another such process.
+Let $\{N(t): t \ge 0\}$ denote the GPP with characteristic triple $(\beta, \gamma ,\kappa)$. 
+
+In joint work with Brian Fralix, we use the same basic conditioning approach to derive the Laplace functional of the GPP \cite{PittmanFralix2026GPP}. We first analyze a truncated version of the Laplace functional on the interval $(s,t]$ for a non-negative continuous function $f$ with compact support. We condition on the time of the first arrival of the GPP, at which point the process branches into two independent GPPs initialized at the arrival time, one with characteristic triple $(\beta, \gamma, \kappa)$ and another with $(\gamma, \gamma,\kappa)$.
+This conditioning leads to a linear ODE whose solution involves the truncated Laplace functional for the \((\gamma,\gamma,\kappa)\) process; conditioning once more yields a Bernoulli ODE for that functional.
+Solving the Bernoulli ODE and combining with the result for the $(\beta, \gamma, \kappa)$ process, we set $s=0$ and let $t\to\infty$ to obtain the Laplace functional. Because $f$ has compact support, the truncated functional stabilizes once $t$ exceeds the support of $f$. We obtain that the Laplace functional is
+\begin{align*} \mathbb{E}[e^{-\int_{[0,\infty)}f(s)N(ds)}] = \left(\frac{(1/\gamma)}{(1/\gamma) + \int_{0}^{\infty}(1 - e^{-f(u)})\kappa(u)e^{\gamma \int_0^u \kappa(x)dx}du}\right)^{\beta/\gamma}.\end{align*}
+Here, $N(ds)$ represents the counting measure associated with the GPP $\{N(t): t\ge 0\}$. Since the Laplace functional uniquely characterizes a point process, this formula provides a complete distributional characterization of the GPP. 
+
+We apply the method more broadly to obtain moment recursions and the Laplace functional for a two-function generalization of the GPP studied in \cite{Willmot2010}, as well as Laplace functionals for the multivariate extensions of the GPP in \cite{ChaGiorgio2016} and \cite{ChaBadia2020}. We also develop an upper-triangular multivariate GPP that generalizes the combined imperfect repair process in \cite{ChaFinkelstein2024} and derive its Laplace functional. For this model, the offspring-arrival mechanism is the same as in the univariate GPP, but the offspring types are assigned according to time-dependent probabilities. For every $k = 1,2, \cdots , n$ and $\ell = k, k+1, \cdots, n$, let  $p_{k,\ell}:[0,\infty) \to [0,1]$ be functions satisfying
+$$\sum_{\ell = k}^n p_{k,\ell}(s) = 1 \text{ for all } s \ge 0.$$ Conditional on being born at time $s$ from a type-$k$ point, an offspring is assigned type $\ell \in \{k, k+1, \cdots, n\}$ with probability $p_{k,\ell}(s)$. Conditional on their birth times and parent types, offspring types are assigned independently according to these probabilities. Thus, offspring types can remain their parent's type or move to a higher type (never lower), and the type-transition probabilities may vary with time. These results show that the conditioning method extends beyond the univariate GPP to models with more general parameter functions and multivariate branching structure.
+
+%Associate with every arrival of this process another NHPP with rate function $\gamma \kappa(t)$ for $t$ greater than the corresponding arrival time and $\gamma > 0$ that is independent of the other arrivals. Continue to associate with every subsequent arrival of these processes more NHPPs with the rate function $\gamma \kappa(t)$ with the appropriate domain. 
+
+%The name ``Generalized P\'{o}lya Process'' appears to come from \cite{Konno2010} in 2010, but the model itself was used in 1970 in mathematical risk theory with the positive contagion model in \cite{Buhlmann1970}.
+
+\section*{Future Work}
+
+My next project is to determine when the Markov chain framework discussed above can be turned into a computationally competitive algorithm for computing the stationary distribution. 
+I will first analyze our new iterative scheme to establish or estimate the rate of convergence and compare its performance with the standard power iteration and other solvers. Then, I will develop an algorithm for computing the stationary distribution based on the invariant measure representation. Even when our iterative scheme is not the fastest method, the invariant measure representation provides an alternative formulation to which established solvers can be applied. When $|M|=1$, the algorithm reduces to computing one invariant measure and normalizing it. When $|M|>1$, one must compute $|M|$ invariant measures and solve an additional $|M|\times |M|$ system. I will determine for which classes of chains the parallel computation of the $|M|$ vectors, along with favorable sparsity or block structure in $\mathbf{P}$, can offset the extra work when $|M|>1$.
+
+% Extending the theory for the Generalized Polya Processes to more general class of functions, then considering some applied problems
+
+%CHATGPT Suggestion
+A second main direction is to determine how far the continuity assumption on $\kappa$ can be weakened while preserving the Laplace functional formula found above. I will investigate extensions from continuous rate functions to broader classes of nonnegative locally integrable functions, under conditions ensuring that the process remains well-defined, the relevant integrals remain finite, and the Laplace-functional formula remains valid.
+I also plan to develop numerical methods for evaluating the moment recursions for the multivariate GPP models, with the goal of using the resulting moments to compute reliability measures for models such as the combined imperfect repair process studied in \cite{ChaFinkelstein2024}, as well as for related models such as our upper-triangular multivariate GPP.
+
+%My original draft
+% My other project is to extend the results I established for the Generalized P\'{o}lya Process. I want to expand the results to hold for a more general class of functions. In order for the conditioning approach to work, we require that the function $\kappa$ be continuous. However, by using that continuous functions can be used to approximate non-negative, bounded measurable functions with finite support, it may be possible to extend our results to hold for that particular class of functions.
+% Another research direction I am considering is how the GPP can be used in applications. For example, the GPP has a lot of applications in the reliability theory literature, such as in the imperfect repair process in \cite{ChaFinkelstein2024}. There may be worthwhile work to be doing numerical analysis on some of the extensions of the GPP, which would be a good place to use the moment recursions we established.
+
+%CHATGPT Suggestion
+A further direction is to extend my conditioning-based approach to other Pólya urn models. I have already used this approach to derive moment recursions and Laplace transforms for several other urn models. However, for the Apollonian urn studied in \cite{ZhangMahmoud2016}, the corresponding Laplace-transform calculation does not reduce to a comparably simple ODE. I plan to investigate whether techniques from branching-process theory can exploit the branching structure of this urn to produce a tractable transform representation, with the broader goal of identifying which structural features of an urn permit explicit Laplace-transform formulas.
+
+
+%My original version that I ask ChatGPT to evaluate
+% I also plan on continuing to studying other classes of P\'{o}lya urns. An example of this is the Apollonian urn introduced in \cite{ZhangMahmoud2016}. I established a moment recursion using the same condition-based approach for other P\'{o}lya urns and the GPP. However, finding the Laplace transform is not as simple because it does not give rise to a simple ODE. Because of the branching nature used in this method, researching different methods used in handling branching processes may provide ideas in handling the Apollonian urn as well as other classes of urns.
+
+\begin{thebibliography}{99}%alphabetical order
+    %feels like there may be too many here, maybe cut a few out?
+
+    \bibitem{AthreyaKarlin1968}
+    Athreya, K., and Karlin, S. (1968).
+    Embedding of urn schemes into continuous time Markov branching process and related limit theorems.
+    {\em The Annals of Mathematical Statistics} {\bf 39}, 1801-1817.
+
+    % \bibitem{Buhlmann1970}
+    % Buhlmann, H. (1970). {\em Mathematical Methods in Risk Theory}. Springer-Verlag Berlin, Germany.
+
+    \bibitem{ChaFinkelstein2024}
+    Cha, J.H., and Finkelstein, M. (2024).
+    On the combined imperfect repair process.
+    {\em Probability in the Engineering and Informational Sciences} {\bf 38}, 341-354.
+    
+
+    \bibitem{ChenMahmoud2018}
+    Chen, C., and Mahmoud, H. (2018).
+    The continuous-time triangular P\'{o}lya process.
+    {\em Annals of the Institute of Statistical Mathematics} {\bf 70}, 303-321.
+
+    \bibitem{FralixHasankhaniKhademi2024}
+    Fralix, B., Hasankhani, F., and Khademi, A. The role of the random-product technique in
+    the theory of Markov chains on a countable state space.
+    \textit{Handbook of Statistics}, Volume 52, to appear.
+
+    % \bibitem{Konno2010}
+    % Konno, H. (2010).
+    % On the exact solution of a generalized Polya process.
+    % {\em Advances in Mathematical Physics} {\bf 2010}, 504267.
+
+    \bibitem{KrennMahmoudWard2019}
+    Krenn, D., Mahmoud, H., and Ward, M.D. (2019).
+    The continuum P\'{o}lya-like random walk.
+    Preprint accessible on the arXiv at {https://arxiv.org/abs/1608.01233}
+
+        \bibitem{PittmanFralix2024}
+    Pittman, D., and Fralix, B. (2024).
+    Calculating the stationary distribution of a Markov chain by decomposing its set of global balance equations. Preprint available at \url{https://djp-math.github.io/PittmanFralix23Jan2025.pdf}.
+
+    \bibitem{PittmanFralix2026GPP}
+    Pittman, D., and Fralix, B. Multivariate Generalized P\'{o}lya Processes and Related Models. Manuscript in preparation.
+    
+    \bibitem{PittmanFralix2026Polya}
+    Pittman, D., and Fralix, B. On the time-dependent behavior of various types of continuous-time P\'{o}lya-like random walks. Manuscript in preparation.
+
+    
+
+    \bibitem{Willmot2010}
+    Willmot, G.E. (2010).
+    Distributional analysis of a generalization of the Polya process.
+    {\em Insurance:  Mathematics and Economics} {\bf 47}, 423-427.
+
+    \bibitem{ZhangMahmoud2016}
+    Zhang, P., and Mahmoud, H.M. (2016).
+    Distributions in a class of Poissonized urns with an application to Apollonian networks.
+    {\em Statistics and Probability Letters} {\bf 115}, 1-7.
+
+    % \bibitem{BuckinghamFralix2015}
+    % Buckingham, P., and Fralix, B. (2015).
+    % Some new insights into Kolmogorov's criterion, with applications to hysteretic queues.
+    % {\em Markov Processes and Related Fields} {\bf 21}, 339-368.
+
+
+
+    % \bibitem{Cha2014}
+    % Cha, J.H. (2014).
+    % Characterization of the generalized P\'{o}lya process and its applications.
+    % {\em Advances in Applied Probability} {\bf 46}, 1148-1171.
+
+    \bibitem{ChaBadia2020}
+    Cha, J.H., and Badia, F.G. (2020).
+    On a multivariate generalized P\'{o}lya process without regularity property.
+    {\em Probability in the Engineering and Informational Sciences} {\bf 34}, 484-506.
+
+
+    \bibitem{ChaGiorgio2016}
+    Cha, J.H., and Giorgio, M. (2016).
+    On a class of multivariate counting processes.
+    {\em Advances in Applied Probability} {\bf 48}, 443-462.
+
+    
+
+    
+
+    % \bibitem{JenningsMandelbaumMasseyWhitt1996}
+    % Jennings, O.B., Mandelbaum, A., Massey, W.A., and Whitt, W. (1996).
+    % Server staffing to meet time-varying demand.
+    % {\em Management Science} {\bf 42}, 1383-1394.
+
+    
+
+    
+
+    % \bibitem{MahmoudZhang2020}
+    % Mahmoud, H.M., and Zhang, P. (2020).
+    % Distributions in the constant-differentials P\'{o}lya process.
+    % {\em Statistics and Probability Letters} {\bf 156}, 108592.
+
+    %\bibitem{MelykutiPfaffelhuber2015}
+    %M\'{e}lyk\'{u}ti, B., and Pfaffelhuber, P. (2015).
+    %The stationary distribution of a Markov jump process glued togehter from two state spaces at two vertices.
+    %{\em Stochastic Models} {\bf 31}, 525-553.
+
+
+
+
+    % \bibitem{JenningsMandelbaumMasseyWhitt1996}
+    % Jennings, O., Mandelbaum, A., Massey, W., and Whitt, W. (1996). Server Staffing to Meet Time-Varying Demand. {\em Managament Science}, vol. 42, No. 10, 1996, pp. 1383-1394.
+
+    
+    
+    
+
+
+% %references listed in the GPP Latex file
+% \bibitem{AthreyaKarlin1968}
+% Athreya, K., and Karlin, S. (1968).
+% Embedding of urn schemes into continuous time Markov branching process and related limit theorems.
+% {\em The Annals of Mathematical Statistics} {\bf 39}, 1801-1817.
+
+% \bibitem{BalajiMahmoud2006}
+% Balaji, S., and Mahmoud, H. (2006).
+% Exact and limiting distributions in diagonal P\'{o}lya processes.
+% {\em Annals of the Institute of Statistical Mathematics} {\bf 58}, 171-185.
+
+% \bibitem{BalajiMahmoudWatanabe2006}
+% Balaji, S., Mahmoud, H., and Watanabe, O. (2006).
+% Distributions in the Ehrenfest process.
+% {\em Statistics and Probability Letters} {\bf 76}, 666-674.
+
+% \bibitem{Cha2014}
+% Cha, J.H. (2014).
+% Characterization of the generalized P\'{o}lya process and its applications.
+% {\em Advances in Applied Probability} {\bf 46}, 1148-1171.
+
+
+% \bibitem{ChaFinkelstein2018}
+% Cha, J.H., and Finkelstein, M. (2018).
+% On a new shot noise process and the induced survival model.
+% {\em Methodology and Computing in Applied Probability} {\bf 20}, 897-917.
+
+
+
+
+% \bibitem{Cha2022}
+% Cha, J.H. (2022).
+% An extended class of univariate and multivariate generalized P\'{o}lya processes.
+% {\em Advances in Applied Probability} {\bf 54}, 974-997.
+
+
+
+% \bibitem{Coddington1989}
+% Coddington, E.A. (1989).
+% {\em An Introduction to Ordinary Differential Equations}.
+% Dover Books on Mathematics, Mineola, NY, USA.
+
+% \bibitem{DawPender2018}
+% Daw, A., and Pender, J. (2018).
+% Queues driven by Hawkes processes.
+% {\em Stochastic Systems} {\bf 8}, 192-229.
+
+% \bibitem{DormanSinsheimerLange2004}
+% Dorman, K.S., Sinsheimer, J.S., and Lange, K. (2004).
+% In the garden of branching processes.
+% {\em SIAM Review} {\bf 46} (2), 202-229.
+
+% \bibitem{FendickWhitt2021}
+% Fendick, K.W., and Whitt, W. (2021).
+% Queues with path-dependent arrival processes.
+% {\em Journal of Applied Probability} {\bf 58}, 484-504.
+
+% \bibitem{FendickWhitt2022}
+% Fendick, K.W., and Whitt, W. (2022).
+% Heavy-traffic limits for queues with non-stationary path-dependent arrival processes.
+% {\em Queueing Systems} {\bf 101}, 113-135.
+
+% \bibitem{FendickWhitt2023}
+% Fendick, K.W., and Whitt, W. (2023).
+% Queueing networks with path-dependent arrival processes.
+% {\em Queueing Systems} {\bf 105}, 17-46.
+
+% \bibitem{FendickWhitt2024}
+% Fendick, K.W., and Whitt, W. (2024).
+% On Gaussian Markov processes and P\'{o}lya processes.
+% {\em Operations Research Letters} {\bf 52}, 107062.
+
+% \bibitem{Fralix2024}
+% Fralix, B. (2024).
+% Campbell-like theorems for Markovian arrival processes.
+% Under revision.
+
+% \bibitem{GolmanHagmannMiller}
+% Golman, R., Hagmann, D., and Miller, J.H. (2015).
+% P\'{o}lya's Bees:  a model of decentralized decision making.
+% {\em Science Advances} {\bf 1}, e1500253.
+
+% \bibitem{JenningsMandelbaumMasseyWhitt1996}
+% Jennings, O.B., Mandelbaum, A., Massey, W.A., and Whitt, W. (1996).
+% Server staffing to meet time-varying demand.
+% {\em Management Science} {\bf 42}, 1383-1394.
+
+% \bibitem{Konno2010}
+% Konno, H. (2010).
+% On the exact solution of a generalized Polya process.
+% {\em Advances in Mathematical Physics} {\bf 2010}, 504267.
+
+% \bibitem{KoopsSaxenaBoxmaMandjes2018}
+% Koops, D.T., Saxena, M., Boxma, O.J., and Mandjes, M. (2018).
+% Infinite-server queues with Hawkes input.
+% {\em Journal of Applied Probability} {\bf 55}, 920-943.
+
+
+
+% \bibitem{LeGat2014}
+% Le Gat, Y. (2014).
+% Extending the Yule process to model recurrent pipe failures in water supply networks.
+% {\em Urban Water Journal} {\bf 11}, 617-630.
+
+% \bibitem{Mahmoud2008}
+% Mahmoud, H. (2008).
+% {\em P\'{o}lya Urn Models}.
+% CRC Press, Taylor and Frances, Boca Raton, FL, USA.
+
+% \bibitem{MahmoudZhang2020}
+% Mahmoud, H.M., and Zhang, P. (2020).
+% Distributions in the constant-differentials P\'{o}lya process.
+% {\em Statistics and Probability Letters} {\bf 156}, 108592.
+
+% \bibitem{SparksMahmoud2013}
+% Sparks, J., and Mahmoud, H.M. (2013).
+% Phases in the two-color tenable zero-balanced P\'{o}lya process.
+% {\em Statistics and Probability Letters} {\bf 83}, 265-271.
+
+% \bibitem{Wilmott2010} %``Willmot'' is misspelled here
+% Willmot, G.E. (2010).
+% Distributional analysis of a generalization of the Polya process.
+% {\em Insurance:  Mathematics and Economics} {\bf 47}, 423-427.
+
+
+
+% %unique references listed in the Polya Urn Latex file
+% \bibitem{Allen2015}
+% Allen, L.J.S. (2015).
+% {\em Stochastic Population and Epidemic Models: Persistence and Extinction}.
+% Springer International Publishing, Cham, Switzerland.
+
+% \bibitem{ChenZhang2019}
+% Chen, C., and Zhang, P. (2019).
+% Characterizations of asymptotic distributions of continuous-time P\'{o}lya processes.
+% {\em Communications in Statistics:  Theory and Methods} {\bf 48}, 5308-5321.
+
+% \bibitem{Durrett2015}
+% Durrett, R. (2015).
+% {\em Branching Process Models of Cancer}.
+% Springer International Publishing, Cham, Switzerland.
+
+% \bibitem{GoldmanHagmannMiller2015}
+% Goldman, R., Hagmann, D., and Miller, J.H. (2015).
+% P\'{o}lya's bees:  a model of decentralized decision-making.
+% {\em Science Advances} {\bf 1}, e1500253.
+
+
+    
+\end{thebibliography}
+%references to the papers I've written with Dr. Fralix as well as any other papers I would reference 
+\end{changemargin}
+\end{document}
